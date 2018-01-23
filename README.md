@@ -1,2 +1,5 @@
 # go-kit
-Personal Golang Toolkit
+Golang Toolkit
+
+## CAUTION
+use it with vendor
