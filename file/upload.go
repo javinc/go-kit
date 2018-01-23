@@ -33,20 +33,6 @@ func Upload(file multipart.File, header *multipart.FileHeader, err error) (strin
 		return name, "FILE_UPLOAD_ERROR", err
 	}
 
-	ext := getExtension(header.Filename)
-	name = hash.GenerateMd5() + "." + ext
-	filePath := Path + name
-	out, err := os.Create(filePath)
-	if err != nil {
-		return name, "FILE_UPLOAD_CREATE_ERROR", err
-	}
-
-	defer out.Close()
-	_, err = io.Copy(out, file)
-	if err != nil {
-		return name, "FILE_UPLOAD_COPY_ERROR", err
-	}
-
 	size, err := getFileSize(file)
 	if err != nil {
 		return name, "FILE_UPLOAD_SIZE_ERROR", err
@@ -66,6 +52,21 @@ func Upload(file multipart.File, header *multipart.FileHeader, err error) (strin
 	// check allowed mime
 	if !strings.HasPrefix(mime, Mime) {
 		return name, "FILE_UPLOAD_MIME_NOT_ALLOWED", errors.New(mime + " content-type not allowed")
+	}
+
+	// copy file to desitination
+	ext := getExtension(header.Filename)
+	name = hash.GenerateMd5() + "." + ext
+	filePath := Path + name
+	out, err := os.Create(filePath)
+	if err != nil {
+		return name, "FILE_UPLOAD_CREATE_ERROR", err
+	}
+
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		return name, "FILE_UPLOAD_COPY_ERROR", err
 	}
 
 	return name, "", nil
