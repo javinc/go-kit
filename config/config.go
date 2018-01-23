@@ -24,3 +24,18 @@ func Init() {
 		panic(fmt.Errorf("Fatal error config file: %s", err))
 	}
 }
+
+// GetBool by key
+func GetBool(key string) bool {
+	return viper.GetBool(key)
+}
+
+// GetString by key
+func GetString(key string) string {
+	return viper.GetString(key)
+}
+
+// GetInt by key
+func GetInt(n string) int {
+	return viper.GetInt(n)
+}

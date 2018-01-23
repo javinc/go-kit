@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/spf13/viper"
+	"github.com/javinc/go-kit/config"
 	"gopkg.in/gomail.v2"
 )
 
@@ -40,10 +40,10 @@ func Start() {
 	tmpl = t
 
 	conf = c{
-		viper.GetString("mail.host"),
-		viper.GetInt("mail.port"),
-		viper.GetString("mail.user"),
-		viper.GetString("mail.pass"),
+		config.GetString("mail.host"),
+		config.GetInt("mail.port"),
+		config.GetString("mail.user"),
+		config.GetString("mail.pass"),
 	}
 
 	// check config
