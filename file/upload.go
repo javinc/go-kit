@@ -74,7 +74,8 @@ func Upload(file multipart.File, header *multipart.FileHeader, err error) (strin
 
 func getExtension(filename string) string {
 	raw := strings.Split(filename, ".")
-	return raw[len(raw)-1]
+
+	return strings.ToLower(raw[len(raw)-1])
 }
 
 func getFileSize(file multipart.File) (int, error) {
