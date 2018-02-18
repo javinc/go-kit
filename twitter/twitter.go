@@ -27,8 +27,8 @@ var (
 func Init() {
 	defaultCBURL := config.GetString("host") + config.GetString("port") + "/twitter-callback-default"
 	oAuthConf = &oauth1.Config{
-		ConsumerKey:    config.GetString("twitter.consumer_key"),
-		ConsumerSecret: config.GetString("twitter.consumer_secret"),
+		ConsumerKey:    config.GetString("twitter.consumer-key"),
+		ConsumerSecret: config.GetString("twitter.consumer-secret"),
 		CallbackURL:    defaultCBURL,
 		Endpoint:       twitterOAuth1.AuthorizeEndpoint,
 	}
