@@ -67,12 +67,11 @@ func GetUser() (user User, err error) {
 }
 
 // PostStatus feed
-func PostStatus(link, msg string) (tweet *twitter.Tweet, err error) {
+func PostStatus(status string) (tweet *twitter.Tweet, err error) {
 	if err = checkClient(); err != nil {
 		return
 	}
 
-	status := msg + " " + link
 	tweet, _, err = client.Statuses.Update(status, &twitter.StatusUpdateParams{})
 
 	return
