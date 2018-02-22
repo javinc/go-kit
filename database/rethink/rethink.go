@@ -1,11 +1,12 @@
 package rethink
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/javinc/go-kit/config"
+	log "github.com/sirupsen/logrus"
 	r "gopkg.in/gorethink/gorethink.v3"
+
+	"github.com/javinc/go-kit/config"
 )
 
 // rethink abstraction
@@ -18,7 +19,7 @@ var (
 func Init() {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r, "Reconnecting...")
+			log.Warn("[rethink] reconnecting...")
 			time.Sleep(time.Second * 5)
 			Init()
 		}
@@ -29,7 +30,7 @@ func Init() {
 		Database: config.GetString("rethink.name"),
 	})
 	if err != nil {
-		panic(fmt.Errorf("Fatal error rethink connection: %s", err))
+		log.Panicf("[rethink] connection error: %s", err)
 	}
 
 	// set instance

@@ -4,12 +4,15 @@ package mysql
 
 import (
 	"fmt"
+	"time"
 
 	// requires by the example
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
-	"github.com/javinc/go-kit/config"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/javinc/go-kit/config"
 )
 
 var (
@@ -18,9 +21,17 @@ var (
 
 // Init database
 func Init() {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Warn("[mysql] reconnecting...")
+			time.Sleep(time.Second * 5)
+			Init()
+		}
+	}()
+
 	i, err := gorm.Open("mysql", getConfig())
 	if err != nil {
-		panic(fmt.Errorf("Fatal error mysql connection: %s", err))
+		log.Panicf("[mysql] connection error: %s", err)
 	}
 
 	// set instance
