@@ -8,12 +8,18 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/nfnt/resize"
 )
 
 // image manipulation
+
+var (
+	// Path upload directory
+	Path = "./upload/cache/"
+)
 
 // Resize creates a scaled image with new dimensions
 // If either width or height is set to 0, it will be set to an aspect ratio preserving value
@@ -24,16 +30,24 @@ func Resize(path string, width, height uint) (newPath string, err error) {
 // Thumbnail downscales an image preserving its aspect ratio to the maximum dimensions
 //  It will return the original image if original sizes are smaller than the provided dimensions.
 func Thumbnail(path string, width, height uint) (newPath string, err error) {
+	newPath = composePath(path, width, height)
+
 	// check for cache
+
+	// make cache path writable
+	dir, _ := filepath.Split(newPath)
+	os.MkdirAll(dir, 0777)
+	if err != nil {
+		return
+	}
 
 	img, err := decodeImage(path)
 	if err != nil {
 		return
 	}
 
-	_, filename := filepath.Split(path)
 	m := resize.Thumbnail(width, height, img, resize.Lanczos3)
-	out, newPath, err := Cache(filename, width, height)
+	out, err := os.Create(newPath)
 	if err != nil {
 		return
 	}
@@ -49,6 +63,7 @@ func encodeImage(newPath string, file *os.File, img image.Image) error {
 	ext := filepath.Ext(newPath)
 	switch strings.ToUpper(ext) {
 	case ".JPG":
+		fallthrough
 	case ".JPEG":
 		return jpeg.Encode(file, img, nil)
 	case ".PNG":
@@ -58,8 +73,6 @@ func encodeImage(newPath string, file *os.File, img image.Image) error {
 	default:
 		return errors.New("unsupported image type " + ext)
 	}
-
-	return nil
 }
 
 func decodeImage(path string) (image.Image, error) {
@@ -96,4 +109,19 @@ func decodeImage(path string) (image.Image, error) {
 	}
 
 	return img, nil
+}
+
+// outputs /upload/cache/600x400/test.jpg
+func composePath(filename string, width, height uint) string {
+	strconv.Itoa(int(width))
+
+	// clean upload path
+	Path = strings.TrimSuffix(Path, "/")
+	dimension := strconv.Itoa(int(width)) + "x" + strconv.Itoa(int(height))
+
+	return strings.Join([]string{
+		Path,
+		dimension,
+		filename,
+	}, "/")
 }
