@@ -2,6 +2,7 @@ package image
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -18,16 +19,17 @@ func Cache(filename string, width, height uint) (file *os.File, newPath string, 
 	newPath = composePath(filename, width, height)
 
 	// make upload path writable
-	os.Mkdir(newPath, 0777)
+	dir, _ := filepath.Split(newPath)
+	os.MkdirAll(dir, 0777)
 	if err != nil {
 		return
 	}
 
-	out, err := os.Create(newPath + filename)
+	file, err = os.Create(newPath)
 	if err != nil {
 		return
 	}
-	defer out.Close()
+	// defer file.Close()
 
 	return
 }

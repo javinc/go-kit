@@ -75,6 +75,7 @@ func decodeImage(path string) (image.Image, error) {
 	ext := filepath.Ext(path)
 	switch strings.ToUpper(ext) {
 	case ".JPG":
+		fallthrough
 	case ".JPEG":
 		img, err = jpeg.Decode(file)
 		if err != nil {
