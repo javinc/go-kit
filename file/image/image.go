@@ -33,6 +33,9 @@ func Thumbnail(path string, width, height uint) (newPath string, err error) {
 	newPath = composePath(path, width, height)
 
 	// check for cache
+	if _, exists := os.Stat(newPath); exists == nil {
+		return
+	}
 
 	// make cache path writable
 	dir, _ := filepath.Split(newPath)
