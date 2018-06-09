@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "as4Edo+f/S9WLaLwQVfFYe+75wI=",
+			"path": "github.com/NaySoftware/go-fcm",
+			"revision": "28fff9381d17f35619309c7a5ada41d26030d976",
+			"revisionTime": "2018-02-07T12:43:14Z"
+		},
+		{
 			"checksumSHA1": "Zlk5zPiw+3u9pyy4kNThpKDaYmE=",
 			"path": "github.com/cenkalti/backoff",
 			"revision": "2ea60e5f094469f9e65adb9cd103795b73ae743e",
