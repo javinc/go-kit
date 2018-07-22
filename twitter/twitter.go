@@ -30,7 +30,7 @@ func Init() {
 		ConsumerKey:    config.GetString("twitter.consumer-key"),
 		ConsumerSecret: config.GetString("twitter.consumer-secret"),
 		CallbackURL:    defaultCBURL,
-		Endpoint:       twitterOAuth1.AuthorizeEndpoint,
+		Endpoint:       twitterOAuth1.AuthenticationEndpoint,
 	}
 }
 
