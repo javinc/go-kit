@@ -2,25 +2,27 @@ package hash
 
 import (
 	"crypto/md5"
+	"fmt"
 	"encoding/hex"
 	"time"
 )
 
-// Salt for hasing
-const Salt = "andpepper"
+// Salt for hashing
+var Salt = "andpepper"
 
-// Md5 string
-func Md5(s string) string {
+// MD5 returns a hashed string.
+func MD5(s string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(s + Salt))
 
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-// GenerateMd5 base on timestamp
-func GenerateMd5() string {
+// GenerateMD5 returns a generated hash.
+func GenerateMD5() string {
 	hasher := md5.New()
-	hasher.Write([]byte(time.Now().String() + Salt))
+	t := time.Now().UnixNano()
+	hasher.Write([]byte(fmt.Sprintf("%d %s", t, Salt)))
 
 	return hex.EncodeToString(hasher.Sum(nil))
 }
