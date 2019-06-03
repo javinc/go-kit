@@ -1,3 +1,3 @@
 # go-kit
-Golang Toolkit! **CAUTION!** use it with vendor.
 
+**do not use it** Its personal!
