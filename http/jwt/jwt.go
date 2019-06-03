@@ -9,9 +9,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var (
-	sigKey = []byte("chilig@rlic")
-)
+// SigKey contains JWT signature key.
+var SigKey = "goto-at-chiligarlic"
 
 // Claims custom auth map claim.
 type Claims struct {
@@ -23,7 +22,7 @@ type Claims struct {
 // New creates access token.
 func New(c Claims) (token string, err error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
-	return t.SignedString(sigKey)
+	return t.SignedString([]byte(SigKey))
 }
 
 // Parse return id from token.
@@ -34,7 +33,7 @@ func Parse(token string) (c Claims, err error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return sigKey, nil
+		return []byte(SigKey), nil
 	})
 
 	if t == nil || !t.Valid {

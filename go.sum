@@ -1,3 +1,5 @@
+github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/javinc/go-kit v0.1.0 h1:jl/KiMI3uYKBFTbw4gdTyMiKlbeLh5u2J7JjXLdzY/o=
 github.com/javinc/go-kit v0.1.0/go.mod h1:6013/KsFBmD+8DGiTsTkenJzzVWm1gTRNtMXph5GTHo=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
