@@ -1,3 +1,3 @@
 # go-kit
 
-**do not use it** Its personal!
+Its personal! **DO NOT USE** 
