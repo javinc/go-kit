@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/javinc/go-kit/hash"
+	"github.com/kudarap/go-kit/hash"
 )
 
 var (
