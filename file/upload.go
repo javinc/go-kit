@@ -56,7 +56,7 @@ func Upload(file multipart.File, header *multipart.FileHeader, err error) (strin
 
 	// copy file to desitination
 	ext := getExtension(header.Filename)
-	name = hash.GenerateMd5() + "." + ext
+	name = hash.GenerateMD5() + "." + ext
 	filePath := Path + name
 	out, err := os.Create(filePath)
 	if err != nil {
