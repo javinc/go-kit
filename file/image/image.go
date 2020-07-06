@@ -14,33 +14,21 @@ import (
 	"github.com/nfnt/resize"
 )
 
-// image manipulation
+const cacheDir = "cache"
 
-var (
-	// Path upload directory
-	Path = "./upload/cache/"
-)
-
-// Resize creates a scaled image with new dimensions
-// If either width or height is set to 0, it will be set to an aspect ratio preserving value
-func Resize(path string, width, height uint) (newPath string, err error) {
-	return
-}
-
-// Thumbnail downscales an image preserving its aspect ratio to the maximum dimensions
-//  It will return the original image if original sizes are smaller than the provided dimensions.
+// Thumbnail downscales an image preserving its aspect ratio to the maximum dimensions.
+// It will return the original image if original sizes are smaller than the provided dimensions.
 func Thumbnail(path string, width, height uint) (newPath string, err error) {
 	newPath = composePath(path, width, height)
 
-	// check for cache
+	// Check for cache
 	if _, exists := os.Stat(newPath); exists == nil {
 		return
 	}
 
-	// make cache path writable
+	// Make cache path writable
 	dir, _ := filepath.Split(newPath)
-	os.MkdirAll(dir, 0777)
-	if err != nil {
+	if err = os.MkdirAll(dir, os.ModePerm); err != nil {
 		return
 	}
 
@@ -56,8 +44,10 @@ func Thumbnail(path string, width, height uint) (newPath string, err error) {
 	}
 	defer out.Close()
 
-	// write new image to file
-	encodeImage(newPath, out, m)
+	// Write new image to file
+	if err = encodeImage(newPath, out, m); err != nil {
+		return
+	}
 
 	return
 }
@@ -79,14 +69,14 @@ func encodeImage(newPath string, file *os.File, img image.Image) error {
 }
 
 func decodeImage(path string) (image.Image, error) {
-	// open file
+	// Open file
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	// decode base on type
+	// Decode base on type
 	var img image.Image
 	ext := filepath.Ext(path)
 	switch strings.ToUpper(ext) {
@@ -114,17 +104,11 @@ func decodeImage(path string) (image.Image, error) {
 	return img, nil
 }
 
-// outputs /upload/cache/600x400/test.jpg
+// Outputs /upload/cache/600x400/test.jpg
 func composePath(filename string, width, height uint) string {
-	strconv.Itoa(int(width))
-
-	// clean upload path
-	Path = strings.TrimSuffix(Path, "/")
+	dir := filepath.Dir(filename)
+	name := filepath.Base(filename)
 	dimension := strconv.Itoa(int(width)) + "x" + strconv.Itoa(int(height))
-
-	return strings.Join([]string{
-		Path,
-		dimension,
-		filename,
-	}, "/")
+	path := filepath.Join(dir, cacheDir, dimension, name)
+	return path
 }
