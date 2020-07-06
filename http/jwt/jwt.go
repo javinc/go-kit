@@ -5,28 +5,31 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-// SigKey contains JWT signature key.
-var SigKey = "goto-at-chiligarlic"
+// SigKey JWT signature key and you need to set your own!
+var SigKey = "mal3d1ct10n"
 
-// Claims custom auth map claim.
+// Claims represents JWT payload.
 type Claims struct {
-	UID uint  `json:"uid"` // Get ID
-	Lvl uint8 `json:"lvl"` // Auth Level
+	UserID string
+	Level  string
 	jwt.StandardClaims
 }
 
-// New creates access token.
-func New(c Claims) (token string, err error) {
+// New creates new JWT with claims payload.
+func New(userID, level string, expiration time.Time) (token string, err error) {
+	c := Claims{UserID: userID, Level: level}
+	c.ExpiresAt = expiration.Unix()
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	return t.SignedString([]byte(SigKey))
 }
 
-// Parse return id from token.
-func Parse(token string) (c Claims, err error) {
+// Parse validates and extract claims from token.
+func Parse(token string) (*Claims, error) {
 	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -37,56 +40,39 @@ func Parse(token string) (c Claims, err error) {
 	})
 
 	if t == nil || !t.Valid {
-		err = errors.New("token is not valid")
-		return
+		return nil, fmt.Errorf("token is not valid: %s", err)
 	}
 
 	tc, ok := t.Claims.(*Claims)
 	if !ok || tc == nil {
-		err = errors.New("token have empty claims")
-		return
+		return nil, errors.New("token have empty claims")
 	}
 
-	return *tc, nil
+	return tc, nil
 }
 
-// ParseFrom http header Authorization request.
-func ParseFrom(h http.Header) (c Claims, err error) {
-	// Get token from Authorization header.
-	t, err := pluckTokenFrom(h.Get("Authorization"))
-	if err != nil {
-		return
-	}
-
-	return Parse(t)
-}
-
-// plucks toke from a valid authorization bearer header.
-func pluckTokenFrom(header string) (token string, err error) {
-	// Get authorization header.
-	header = strings.TrimSpace(header)
+// ParseFromHeader parses Authorization bearer token as JWT.
+func ParseFromHeader(h http.Header) (*Claims, error) {
+	// Get access header.
+	header := strings.TrimSpace(h.Get("Authorization"))
 	if header == "" {
-		err = errors.New("empty authorization header")
-		return
+		return nil, errors.New("empty access header")
 	}
 
 	// Should contain only Bearer and Token.
 	parts := strings.Split(header, " ")
 	if len(parts) != 2 {
-		err = errors.New("invalid authorization header")
-		return
+		return nil, errors.New("invalid access header")
 	}
 
 	// Check for bearer existence.
 	if strings.ToUpper(parts[0]) != "BEARER" {
-		err = errors.New("no bearer on authorization header")
-		return
+		return nil, errors.New("no bearer on access header")
 	}
 
 	if strings.TrimSpace(parts[1]) == "" {
-		err = errors.New("empty bearer token")
-		return
+		return nil, errors.New("empty bearer token")
 	}
 
-	return parts[1], nil
+	return Parse(parts[1])
 }
